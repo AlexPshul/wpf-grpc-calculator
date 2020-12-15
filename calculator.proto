@@ -1,0 +1,20 @@
+message OperationRequest {
+  enum Operators {
+    Add = 0,
+    Subtract = 1,
+    Multiply = 2,
+    Divide = 3
+  }
+  double a = 1;
+  double b = 2;
+  Operators operator = 3;
+}
+ 
+message OperationResponse {
+  double result = 1;
+}
+
+service  Calculator {
+  rpc Calculate(OperationRequest) return (OperationResponse) {}
+  rpc ReadCalculatorLoad() returns (stream double) {} //number of actions in a minutes
+}
