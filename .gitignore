@@ -5,4 +5,6 @@
 /.vs
 /CalculatorServer/Debug
 /CalculatorServer/CalculatorServer.vcxproj.user
-/Debug
+**/Debug
+**/Release
+**/x64
