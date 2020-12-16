@@ -33,7 +33,7 @@ extern "C"
     OperationResult Calculate(OperationInfo operationInfo);
 
     typedef void (*CalcLoadCallback_t)(double rate);
-    void RegisterForCallback(CalcLoadCallback_t callback); //for the demo we skip cleaning the callback logic 
+    void RegisterForCallback(CalcLoadCallback_t callback, int intervalInSeconds); //for the demo we skip cleaning the callback logic 
 #ifdef __cplusplus
 }
 #endif

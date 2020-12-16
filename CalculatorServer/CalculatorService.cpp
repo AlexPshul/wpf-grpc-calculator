@@ -1,10 +1,14 @@
-#include "CalculatorService.h"
-#include "CalculatorEngine.h"
-#include <map>
+#include <grpc/grpc.h>
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
 #include <grpcpp/security/server_credentials.h>
+
+#include "CalculatorService.h"
+#include "CalculatorEngine.h"
+#include <map>
+
+#pragma comment (lib, "Ws2_32.lib" )
 
 using namespace calculator;
 using namespace grpc;
@@ -17,8 +21,24 @@ static std::map<OperationRequest_Operators, CalcOperations> operation_map
     {OperationRequest_Operators_DIVIDE, OP_DIV}
 };
 
+CalculatorService* CalculatorService::_this{ nullptr };
+
+void CalculatorService::ReportLoad(double rate) 
+{
+    std::unique_lock<std::mutex> lck(_notificationMutex);
+    _rate = rate;
+    _notification.notify_one();
+}
+
+void CalculatorService::CalcLoadCallback(double rate)
+{
+    if (_this == nullptr)
+        return;
+    _this->ReportLoad(rate);
+}
+
 Status CalculatorService::Calculate(ServerContext* context,
-    const OperationRequest* request, OperationResponse* response)
+                                    const OperationRequest* request, OperationResponse* response)
 {
     response->set_result(0.0); //default, in case of an error
 
@@ -54,7 +74,16 @@ Status CalculatorService::Calculate(ServerContext* context,
 Status CalculatorService::ReadCalculatorLoad(ServerContext* context,
     const LoadIntervalRequest* request, ServerWriter<LoadResponse>* writer)
 {
-    _pWriter = writer;
+    _this = this;
+    RegisterForCallback(CalcLoadCallback, request->intervalinseconds());
+    while(true)
+    {
+        std::unique_lock<std::mutex> lck(_notificationMutex);
+        _notification.wait(lck);
+        LoadResponse response;
+        response.set_invocationsperminutes(_rate);
+        writer->Write(response);
+    }
     return Status::OK;
 }
 

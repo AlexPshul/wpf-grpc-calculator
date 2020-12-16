@@ -3,11 +3,11 @@
 #include <Windows.h>
 
 static double numberOfOperations;
-static HANDLE hTimer;
+static HANDLE hTimerQueue, hTimer;
 static clock_t startTime;
 
 static CalcLoadCallback_t loadCallBack = NULL;
-void CreateLoadTimer(void);
+void CreateLoadTimer(int intervalInSeconds);
 
 OperationResult Calculate(OperationInfo operationInfo)
 {
@@ -48,35 +48,33 @@ OperationResult Calculate(OperationInfo operationInfo)
 }
 
 //for the demo we skip cleaning the callback logic
-void RegisterForCallback(CalcLoadCallback_t callback)
+void RegisterForCallback(CalcLoadCallback_t callback, int intervalInSeconds)
 {
     loadCallBack = callback;
-    CreateLoadTimer();
+    CreateLoadTimer(intervalInSeconds);
 }
 
-void APIENTRY OnLoadReport(
-    LPVOID lpArgToCompletionRoutine,
-    DWORD dwTimerLowValue,
-    DWORD dwTimerHighValue
-    )
+void CALLBACK OnLoadReport(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
     const double timeTaken = (clock() - startTime) / (double)CLOCKS_PER_SEC;
     loadCallBack(numberOfOperations / timeTaken);
 }
 
-void CreateLoadTimer()
+void CreateLoadTimer(int intervalInSeconds)
 {
     startTime = clock();
     SECURITY_ATTRIBUTES sa;
     memset(&sa, 0, sizeof(SECURITY_ATTRIBUTES));
     sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 
-    hTimer = CreateWaitableTimer(&sa, FALSE, NULL);
-    if (hTimer == NULL)
+    hTimerQueue = CreateTimerQueue();
+    if (hTimerQueue == NULL)
     {
         //demo, skip error handling
     }
-    if (!SetWaitableTimer(hTimer, 0, 1000, OnLoadReport, 0, TRUE))
+
+    if (!CreateTimerQueueTimer(&hTimer, hTimerQueue,
+        (WAITORTIMERCALLBACK)OnLoadReport, 0, 1000, intervalInSeconds * 1000, WT_EXECUTEDEFAULT))
     {
         //demo, skip error handling
     }
