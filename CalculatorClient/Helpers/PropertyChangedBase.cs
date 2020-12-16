@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using CalculatorClient.Annotations;
 
-namespace CalculatorClient
+namespace CalculatorClient.Helpers
 {
     public class PropertyChangedBase : INotifyPropertyChanged
     {
