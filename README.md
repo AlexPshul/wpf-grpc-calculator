@@ -14,3 +14,9 @@ C:\Dev\vcpkg\packages\protobuf_x64-windows-static\tools\protobuf\protoc.exe --cp
 For server:
 C:\Dev\vcpkg\packages\protobuf_x64-windows-static\tools\protobuf\protoc.exe --grpc_out=. --plugin=protoc-gen-grpc="C:\Dev\vcpkg\packages\grpc_x64-windows-static\tools\grpc\grpc_cpp_plugin.exe" calculator.proto
 
+Make sure the cxproj has the correct triplet:
+ <PropertyGroup Label="Globals">
+   ...
+    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
+  </PropertyGroup>
