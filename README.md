@@ -5,7 +5,7 @@ For the sake of the demo, we run them only once aftre each change.
 https://github.com/grpc/grpc/blob/v1.34.0/src/cpp/README.md#make
 https://github.com/grpc/grpc/blob/v1.34.0/BUILDING.md
 
-We use the vcpkg installation.
+We use the vcpkg installation: https://github.com/Microsoft/vcpkg
 
 Generating the proto cpp files:
 For messages: 
