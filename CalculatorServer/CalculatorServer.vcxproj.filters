@@ -21,9 +21,27 @@
     <ClCompile Include="CalculatorEngine.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="calculator.pb.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CalculatorService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="calculator.grpc.pb.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CalculatorEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="calculator.pb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CalculatorService.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="calculator.grpc.pb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

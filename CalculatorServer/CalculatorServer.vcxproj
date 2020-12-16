@@ -139,11 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="calculator.grpc.pb.cc" />
+    <ClCompile Include="calculator.pb.cc" />
     <ClCompile Include="CalculatorEngine.c" />
     <ClCompile Include="CalculatorServer.cpp" />
+    <ClCompile Include="CalculatorService.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="calculator.grpc.pb.h" />
+    <ClInclude Include="calculator.pb.h" />
     <ClInclude Include="CalculatorEngine.h" />
+    <ClInclude Include="CalculatorService.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
