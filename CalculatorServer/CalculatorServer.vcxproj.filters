@@ -30,6 +30,9 @@
     <ClCompile Include="calculator.grpc.pb.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AsyncCalculatorService.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CalculatorEngine.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="calculator.grpc.pb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncCalculatorService.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

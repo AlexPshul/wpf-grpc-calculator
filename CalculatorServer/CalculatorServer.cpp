@@ -2,12 +2,15 @@
 //
 
 #include <iostream>
+
+#include "AsyncCalculatorService.h"
 #include "CalculatorService.h"
 
 int main()
 {
     std::cout << "Starting..." << std::endl;
-	CalculatorService::RunServer();
+	//CalculatorService::RunServer();
+	AsyncCalculatorService::RunServer();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
