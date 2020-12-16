@@ -8,7 +8,8 @@
 #include "CalculatorEngine.h"
 #include <map>
 
-#pragma comment (lib, "Ws2_32.lib" )
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "CRYPT32.LIB")
 
 using namespace calculator;
 using namespace grpc;
@@ -95,7 +96,7 @@ Status CalculatorService::ReadCalculatorLoad(ServerContext* context,
     ServerBuilder builder;
     builder.AddListeningPort(serverAddress, InsecureServerCredentials());
     builder.RegisterService(&service);
-    std::unique_ptr<grpc_impl::Server> server(builder.BuildAndStart());
+    std::unique_ptr<Server> server(builder.BuildAndStart());
     std::cout << "Server listening on " << serverAddress << std::endl;
     server->Wait();
 }

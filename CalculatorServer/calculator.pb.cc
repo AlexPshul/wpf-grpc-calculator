@@ -40,7 +40,6 @@ static void InitDefaultsscc_info_LoadIntervalRequest_calculator_2eproto() {
     new (ptr) ::calculator::LoadIntervalRequest();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::calculator::LoadIntervalRequest::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_LoadIntervalRequest_calculator_2eproto =
@@ -54,7 +53,6 @@ static void InitDefaultsscc_info_LoadResponse_calculator_2eproto() {
     new (ptr) ::calculator::LoadResponse();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::calculator::LoadResponse::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_LoadResponse_calculator_2eproto =
@@ -68,7 +66,6 @@ static void InitDefaultsscc_info_OperationRequest_calculator_2eproto() {
     new (ptr) ::calculator::OperationRequest();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::calculator::OperationRequest::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_OperationRequest_calculator_2eproto =
@@ -82,7 +79,6 @@ static void InitDefaultsscc_info_OperationResponse_calculator_2eproto() {
     new (ptr) ::calculator::OperationResponse();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::calculator::OperationResponse::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_OperationResponse_calculator_2eproto =
@@ -196,8 +192,6 @@ constexpr int OperationRequest::Operators_ARRAYSIZE;
 
 // ===================================================================
 
-void OperationRequest::InitAsDefaultInstance() {
-}
 class OperationRequest::_Internal {
  public:
 };
@@ -218,8 +212,9 @@ OperationRequest::OperationRequest(const OperationRequest& from)
 }
 
 void OperationRequest::SharedCtor() {
-  ::memset(&a_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&operator__) -
+  ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
+      reinterpret_cast<char*>(&a_) - reinterpret_cast<char*>(this)),
+      0, static_cast<size_t>(reinterpret_cast<char*>(&operator__) -
       reinterpret_cast<char*>(&a_)) + sizeof(operator__));
 }
 
@@ -262,7 +257,6 @@ void OperationRequest::Clear() {
 
 const char* OperationRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
@@ -447,8 +441,6 @@ void OperationRequest::InternalSwap(OperationRequest* other) {
 
 // ===================================================================
 
-void OperationResponse::InitAsDefaultInstance() {
-}
 class OperationResponse::_Internal {
  public:
 };
@@ -507,7 +499,6 @@ void OperationResponse::Clear() {
 
 const char* OperationResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
@@ -642,8 +633,6 @@ void OperationResponse::InternalSwap(OperationResponse* other) {
 
 // ===================================================================
 
-void LoadIntervalRequest::InitAsDefaultInstance() {
-}
 class LoadIntervalRequest::_Internal {
  public:
 };
@@ -702,7 +691,6 @@ void LoadIntervalRequest::Clear() {
 
 const char* LoadIntervalRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
@@ -839,8 +827,6 @@ void LoadIntervalRequest::InternalSwap(LoadIntervalRequest* other) {
 
 // ===================================================================
 
-void LoadResponse::InitAsDefaultInstance() {
-}
 class LoadResponse::_Internal {
  public:
 };
@@ -899,7 +885,6 @@ void LoadResponse::Clear() {
 
 const char* LoadResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);

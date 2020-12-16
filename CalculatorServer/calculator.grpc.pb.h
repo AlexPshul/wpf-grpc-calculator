@@ -56,16 +56,10 @@ class Calculator final {
      public:
       virtual ~experimental_async_interface() {}
       virtual void Calculate(::grpc::ClientContext* context, const ::calculator::OperationRequest* request, ::calculator::OperationResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void Calculate(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::calculator::OperationResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       virtual void Calculate(::grpc::ClientContext* context, const ::calculator::OperationRequest* request, ::calculator::OperationResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
       virtual void Calculate(::grpc::ClientContext* context, const ::calculator::OperationRequest* request, ::calculator::OperationResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void Calculate(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::calculator::OperationResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      #else
-      virtual void Calculate(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::calculator::OperationResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       virtual void ReadCalculatorLoad(::grpc::ClientContext* context, ::calculator::LoadIntervalRequest* request, ::grpc::ClientReadReactor< ::calculator::LoadResponse>* reactor) = 0;
@@ -110,16 +104,10 @@ class Calculator final {
       public StubInterface::experimental_async_interface {
      public:
       void Calculate(::grpc::ClientContext* context, const ::calculator::OperationRequest* request, ::calculator::OperationResponse* response, std::function<void(::grpc::Status)>) override;
-      void Calculate(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::calculator::OperationResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       void Calculate(::grpc::ClientContext* context, const ::calculator::OperationRequest* request, ::calculator::OperationResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
       void Calculate(::grpc::ClientContext* context, const ::calculator::OperationRequest* request, ::calculator::OperationResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      #endif
-      #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void Calculate(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::calculator::OperationResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      #else
-      void Calculate(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::calculator::OperationResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       void ReadCalculatorLoad(::grpc::ClientContext* context, ::calculator::LoadIntervalRequest* request, ::grpc::ClientReadReactor< ::calculator::LoadResponse>* reactor) override;
@@ -207,7 +195,7 @@ class Calculator final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(0,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::calculator::OperationRequest, ::calculator::OperationResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::calculator::OperationRequest, ::calculator::OperationResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
@@ -222,7 +210,7 @@ class Calculator final {
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(0);
     #endif
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::calculator::OperationRequest, ::calculator::OperationResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::calculator::OperationRequest, ::calculator::OperationResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_Calculate() override {
@@ -254,7 +242,7 @@ class Calculator final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(1,
-          new ::grpc_impl::internal::CallbackServerStreamingHandler< ::calculator::LoadIntervalRequest, ::calculator::LoadResponse>(
+          new ::grpc::internal::CallbackServerStreamingHandler< ::calculator::LoadIntervalRequest, ::calculator::LoadResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
@@ -371,7 +359,7 @@ class Calculator final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodRawCallback(0,
-          new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
@@ -409,7 +397,7 @@ class Calculator final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodRawCallback(1,
-          new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
@@ -444,8 +432,8 @@ class Calculator final {
       ::grpc::Service::MarkMethodStreamed(0,
         new ::grpc::internal::StreamedUnaryHandler<
           ::calculator::OperationRequest, ::calculator::OperationResponse>(
-            [this](::grpc_impl::ServerContext* context,
-                   ::grpc_impl::ServerUnaryStreamer<
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
                      ::calculator::OperationRequest, ::calculator::OperationResponse>* streamer) {
                        return this->StreamedCalculate(context,
                          streamer);
@@ -472,8 +460,8 @@ class Calculator final {
       ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::SplitServerStreamingHandler<
           ::calculator::LoadIntervalRequest, ::calculator::LoadResponse>(
-            [this](::grpc_impl::ServerContext* context,
-                   ::grpc_impl::ServerSplitStreamer<
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerSplitStreamer<
                      ::calculator::LoadIntervalRequest, ::calculator::LoadResponse>* streamer) {
                        return this->StreamedReadCalculatorLoad(context,
                          streamer);

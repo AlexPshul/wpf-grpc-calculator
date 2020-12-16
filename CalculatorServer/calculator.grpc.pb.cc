@@ -42,43 +42,38 @@ Calculator::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel
 }
 
 void Calculator::Stub::experimental_async::Calculate(::grpc::ClientContext* context, const ::calculator::OperationRequest* request, ::calculator::OperationResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_Calculate_, context, request, response, std::move(f));
-}
-
-void Calculator::Stub::experimental_async::Calculate(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::calculator::OperationResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_Calculate_, context, request, response, std::move(f));
+  ::grpc::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_Calculate_, context, request, response, std::move(f));
 }
 
 void Calculator::Stub::experimental_async::Calculate(::grpc::ClientContext* context, const ::calculator::OperationRequest* request, ::calculator::OperationResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_Calculate_, context, request, response, reactor);
-}
-
-void Calculator::Stub::experimental_async::Calculate(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::calculator::OperationResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
-  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_Calculate_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::calculator::OperationResponse>* Calculator::Stub::AsyncCalculateRaw(::grpc::ClientContext* context, const ::calculator::OperationRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::calculator::OperationResponse>::Create(channel_.get(), cq, rpcmethod_Calculate_, context, request, true);
+  ::grpc::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_Calculate_, context, request, response, reactor);
 }
 
 ::grpc::ClientAsyncResponseReader< ::calculator::OperationResponse>* Calculator::Stub::PrepareAsyncCalculateRaw(::grpc::ClientContext* context, const ::calculator::OperationRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::calculator::OperationResponse>::Create(channel_.get(), cq, rpcmethod_Calculate_, context, request, false);
+  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::calculator::OperationResponse>::Create(channel_.get(), cq, rpcmethod_Calculate_, context, request, false);
+}
+
+::grpc::ClientAsyncResponseReader< ::calculator::OperationResponse>* Calculator::Stub::AsyncCalculateRaw(::grpc::ClientContext* context, const ::calculator::OperationRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncCalculateRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 ::grpc::ClientReader< ::calculator::LoadResponse>* Calculator::Stub::ReadCalculatorLoadRaw(::grpc::ClientContext* context, const ::calculator::LoadIntervalRequest& request) {
-  return ::grpc_impl::internal::ClientReaderFactory< ::calculator::LoadResponse>::Create(channel_.get(), rpcmethod_ReadCalculatorLoad_, context, request);
+  return ::grpc::internal::ClientReaderFactory< ::calculator::LoadResponse>::Create(channel_.get(), rpcmethod_ReadCalculatorLoad_, context, request);
 }
 
 void Calculator::Stub::experimental_async::ReadCalculatorLoad(::grpc::ClientContext* context, ::calculator::LoadIntervalRequest* request, ::grpc::experimental::ClientReadReactor< ::calculator::LoadResponse>* reactor) {
-  ::grpc_impl::internal::ClientCallbackReaderFactory< ::calculator::LoadResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_ReadCalculatorLoad_, context, request, reactor);
+  ::grpc::internal::ClientCallbackReaderFactory< ::calculator::LoadResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_ReadCalculatorLoad_, context, request, reactor);
 }
 
 ::grpc::ClientAsyncReader< ::calculator::LoadResponse>* Calculator::Stub::AsyncReadCalculatorLoadRaw(::grpc::ClientContext* context, const ::calculator::LoadIntervalRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::calculator::LoadResponse>::Create(channel_.get(), cq, rpcmethod_ReadCalculatorLoad_, context, request, true, tag);
+  return ::grpc::internal::ClientAsyncReaderFactory< ::calculator::LoadResponse>::Create(channel_.get(), cq, rpcmethod_ReadCalculatorLoad_, context, request, true, tag);
 }
 
 ::grpc::ClientAsyncReader< ::calculator::LoadResponse>* Calculator::Stub::PrepareAsyncReadCalculatorLoadRaw(::grpc::ClientContext* context, const ::calculator::LoadIntervalRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc_impl::internal::ClientAsyncReaderFactory< ::calculator::LoadResponse>::Create(channel_.get(), cq, rpcmethod_ReadCalculatorLoad_, context, request, false, nullptr);
+  return ::grpc::internal::ClientAsyncReaderFactory< ::calculator::LoadResponse>::Create(channel_.get(), cq, rpcmethod_ReadCalculatorLoad_, context, request, false, nullptr);
 }
 
 Calculator::Service::Service() {
@@ -87,7 +82,7 @@ Calculator::Service::Service() {
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< Calculator::Service, ::calculator::OperationRequest, ::calculator::OperationResponse>(
           [](Calculator::Service* service,
-             ::grpc_impl::ServerContext* ctx,
+             ::grpc::ServerContext* ctx,
              const ::calculator::OperationRequest* req,
              ::calculator::OperationResponse* resp) {
                return service->Calculate(ctx, req, resp);
@@ -97,9 +92,9 @@ Calculator::Service::Service() {
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< Calculator::Service, ::calculator::LoadIntervalRequest, ::calculator::LoadResponse>(
           [](Calculator::Service* service,
-             ::grpc_impl::ServerContext* ctx,
+             ::grpc::ServerContext* ctx,
              const ::calculator::LoadIntervalRequest* req,
-             ::grpc_impl::ServerWriter<::calculator::LoadResponse>* writer) {
+             ::grpc::ServerWriter<::calculator::LoadResponse>* writer) {
                return service->ReadCalculatorLoad(ctx, req, writer);
              }, this)));
 }
