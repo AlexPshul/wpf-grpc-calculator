@@ -7,6 +7,9 @@ https://github.com/grpc/grpc/blob/v1.34.0/BUILDING.md
 
 We use the vcpkg installation: https://github.com/Microsoft/vcpkg
 
+>vcpkg install grpc:x64-windows-static
+>vcpkg install grpc:x86-windows-static
+
 Generating the proto cpp files:
 For messages: 
 C:\Dev\vcpkg\packages\protobuf_x64-windows-static\tools\protobuf\protoc.exe --cpp_out=. calculator.proto
