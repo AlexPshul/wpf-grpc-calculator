@@ -139,7 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CalculatorEngine.c" />
     <ClCompile Include="CalculatorServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CalculatorEngine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
