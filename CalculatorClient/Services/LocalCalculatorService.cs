@@ -1,12 +1,21 @@
 ﻿using System;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using CalculatorClient.Models;
 
 namespace CalculatorClient.Services
 {
     public class LocalCalculatorService : ICalculatorService
     {
-        public double Calculate(MathOperation operation)
+        private static readonly Random Random = new Random();
+
+        public IObservable<double> OperationsPerMinute { get; } = Observable
+            .Interval(TimeSpan.FromSeconds(1))
+            .Select(_ => Random.NextDouble() * 10);
+        
+        public async Task<double> Calculate(MathOperation operation)
         {
+            await Task.Delay(5000);
             switch (operation.Operator)
             {
                 case Operators.Add:

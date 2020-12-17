@@ -1,26 +1,45 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace CalculatorClient.Helpers
 {
-    public class Command : ICommand
+    public class Command : PropertyChangedBase, ICommand
     {
         private readonly Action<object> _action;
+        private readonly Func<object, Task> _asyncAction;
 
-        public Command(Action<object> action)
+        private bool _isExecuting;
+        public bool IsExecuting
         {
-            _action = action;
+            get => _isExecuting;
+            set
+            {
+                Set(ref _isExecuting, value);
+                CommandManager.InvalidateRequerySuggested();
+            }
         }
 
-        public Command(Action action)
+        public Command(Action<object> action) => _action = action;
+        public Command(Action action) => _action = _ => action();
+        public Command(Func<object, Task> asyncAction) => _asyncAction = asyncAction;
+        public Command(Func<Task> asyncAction) => _asyncAction = _ => asyncAction();
+
+        public bool CanExecute(object parameter) => !IsExecuting;
+
+        public async void Execute(object parameter)
         {
-            _action = _ => action();
+            if (_action != null)
+            {
+                _action(parameter);
+                return;
+            }
+
+            IsExecuting = true;
+            await _asyncAction(parameter);
+            IsExecuting = false;
         }
 
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter) => _action(parameter);
-        
         public event EventHandler CanExecuteChanged
         {
             add => CommandManager.RequerySuggested += value;

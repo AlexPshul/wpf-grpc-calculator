@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CalculatorClient.Helpers;
 using CalculatorClient.Models;
@@ -35,6 +37,13 @@ namespace CalculatorClient
             set => Set(ref _savedValue, value);
         }
 
+        private double _averageOperations;
+        public double AverageOperations
+        {
+            get => _averageOperations;
+            set => Set(ref _averageOperations, value);
+        }
+
 
         public ICommand OperandManipulationCommand { get; }
         public ICommand OperatorCommand { get; }
@@ -45,6 +54,8 @@ namespace CalculatorClient
             OperandManipulationCommand = new Command(param => AppendToCurrentInput(param as string));
             OperatorCommand = new Command(param => OperatorCall(param as string));
             ClearStateCommand = new Command(ClearState);
+
+            CalculatorService.OperationsPerMinute.Subscribe(averageOperations => AverageOperations = averageOperations);
         }
 
         private void AppendToCurrentInput(string operandPart)
@@ -70,7 +81,7 @@ namespace CalculatorClient
                 CurrentValue += operandPart;
         }
 
-        private void OperatorCall(string pressedOperator)
+        private async Task OperatorCall(string pressedOperator)
         {
             switch (pressedOperator)
             {
@@ -85,7 +96,7 @@ namespace CalculatorClient
                         if (CurrentValue != "0")
                         {
                             _currentMathOperation.RightOperand = double.Parse(CurrentValue);
-                            double middleResult = CalculatorService.Calculate(_currentMathOperation);
+                            double middleResult = await CalculatorService.Calculate(_currentMathOperation);
                             _currentMathOperation.LeftOperand = middleResult;
                             SavedValue = middleResult.ToString(CultureInfo.InvariantCulture);
                         }
@@ -103,7 +114,7 @@ namespace CalculatorClient
                     if (_currentMathOperation.Operator != null)
                     {
                         _currentMathOperation.RightOperand = double.Parse(CurrentValue);
-                        double finalResult = CalculatorService.Calculate(_currentMathOperation);
+                        double finalResult = await CalculatorService.Calculate(_currentMathOperation);
                         SavedValue += _currentMathOperation.RightOperand;
                         CurrentValue = finalResult.ToString(CultureInfo.InvariantCulture);
 

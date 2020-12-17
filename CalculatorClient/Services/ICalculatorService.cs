@@ -1,9 +1,12 @@
-﻿using CalculatorClient.Models;
+﻿using System;
+using System.Threading.Tasks;
+using CalculatorClient.Models;
 
 namespace CalculatorClient.Services
 {
     public interface ICalculatorService
     {
-        double Calculate(MathOperation operation);
+        IObservable<double> OperationsPerMinute { get; }
+        Task<double> Calculate(MathOperation operation);
     }
 }
