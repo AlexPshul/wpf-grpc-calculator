@@ -86,7 +86,7 @@ private:
 
 		virtual state_result_t OnCreate() abstract;
 		virtual state_result_t OnProcess() abstract;
-		virtual state_result_t OnFinish() { return std::make_tuple(false, false, messageProcessingState::FINISH); };
+		virtual state_result_t OnFinish() { return std::make_tuple(false, false, messageProcessingState::FINISH); }
 		~RequestHandlerBase() override = default;
 
 	};
