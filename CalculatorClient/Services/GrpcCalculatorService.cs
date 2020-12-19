@@ -21,7 +21,7 @@ namespace CalculatorClient.Services
 
         public IObservable<double> OperationsPerMinute => _client.OperationsPerMinute;
 
-        public async Task<double> Calculate(MathOperation operation)
+        public async Task<CalculateResponse> Calculate(MathOperation operation)
         {
             if (operation.Operator == null)
                 throw new ArgumentNullException(nameof(operation.Operator));
@@ -30,7 +30,7 @@ namespace CalculatorClient.Services
             {
                 A = operation.LeftOperand,
                 B = operation.RightOperand,
-                Operator = OperatorTypeMapping[(Operators)operation.Operator]
+                Operator = OperatorTypeMapping[(Operators) operation.Operator]
             };
 
             return await _client.CalculateAsync(request);

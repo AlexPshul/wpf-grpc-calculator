@@ -6,6 +6,7 @@ using System.Windows.Input;
 using CalculatorClient.Helpers;
 using CalculatorClient.Models;
 using CalculatorClient.Services;
+using CalculatorLib;
 
 namespace CalculatorClient
 {
@@ -96,9 +97,17 @@ namespace CalculatorClient
                         if (CurrentValue != "0")
                         {
                             _currentMathOperation.RightOperand = double.Parse(CurrentValue);
-                            double middleResult = await CalculatorService.Calculate(_currentMathOperation);
-                            _currentMathOperation.LeftOperand = middleResult;
-                            SavedValue = middleResult.ToString(CultureInfo.InvariantCulture);
+                            CalculateResponse middleResult = await CalculatorService.Calculate(_currentMathOperation);
+                            if (!string.IsNullOrEmpty(middleResult.Error))
+                            {
+                                CurrentValue = middleResult.Error;
+                                _resetOnNextInput = true;
+                            }
+                            else
+                            {
+                                _currentMathOperation.LeftOperand = middleResult.Result;
+                                SavedValue = middleResult.Result.ToString(CultureInfo.InvariantCulture);
+                            }
                         }
                     }
                     else
@@ -114,9 +123,9 @@ namespace CalculatorClient
                     if (_currentMathOperation.Operator != null)
                     {
                         _currentMathOperation.RightOperand = double.Parse(CurrentValue);
-                        double finalResult = await CalculatorService.Calculate(_currentMathOperation);
+                        CalculateResponse finalResult = await CalculatorService.Calculate(_currentMathOperation);
                         SavedValue += _currentMathOperation.RightOperand;
-                        CurrentValue = finalResult.ToString(CultureInfo.InvariantCulture);
+                        CurrentValue = !string.IsNullOrEmpty(finalResult.Error) ? finalResult.Error : finalResult.Result.ToString(CultureInfo.InvariantCulture);
 
                         _currentMathOperation = new MathOperation();
                         _resetOnNextInput = true;

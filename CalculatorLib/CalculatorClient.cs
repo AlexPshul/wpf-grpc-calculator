@@ -18,6 +18,8 @@ namespace CalculatorLib
 
         private readonly Calculator.CalculatorClient _client;
 
+        public IObservable<double> OperationsPerMinute { get; }
+        
         public CalculatorService()
         {
             Channel grpcChannel = new Channel("127.0.0.1:50051", ChannelCredentials.Insecure);
@@ -26,11 +28,17 @@ namespace CalculatorLib
             OperationsPerMinute = ConnectToOperationsPerMinuteStream();
         }
 
-        public IObservable<double> OperationsPerMinute { get; }
-        public async Task<double> CalculateAsync(OperationRequest operation)
+        public async Task<CalculateResponse> CalculateAsync(OperationRequest operation)
         {
-            var response = await _client.CalculateAsync(operation);
-            return response.Result;
+            try
+            {
+                var response = await _client.CalculateAsync(operation);
+                return new CalculateResponse { Result = response.Result };
+            }
+            catch (RpcException exception)
+            {
+                return new CalculateResponse { Error = exception.Status.Detail };
+            }
         }
 
         private IObservable<double> ConnectToOperationsPerMinuteStream()

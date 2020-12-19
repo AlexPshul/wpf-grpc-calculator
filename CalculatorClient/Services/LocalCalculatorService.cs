@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using CalculatorClient.Models;
+using CalculatorLib;
 
 namespace CalculatorClient.Services
 {
@@ -13,22 +14,32 @@ namespace CalculatorClient.Services
             .Interval(TimeSpan.FromSeconds(1))
             .Select(_ => Random.NextDouble() * 10);
         
-        public async Task<double> Calculate(MathOperation operation)
+        public async Task<CalculateResponse> Calculate(MathOperation operation)
         {
             await Task.Yield();
+            double result = 0d;
             switch (operation.Operator)
             {
                 case Operators.Add:
-                    return operation.LeftOperand + operation.RightOperand;
+                    result = operation.LeftOperand + operation.RightOperand;
+                    break;
                 case Operators.Subtract:
-                    return operation.LeftOperand - operation.RightOperand;
+                    result = operation.LeftOperand - operation.RightOperand;
+                    break;
                 case Operators.Multiply:
-                    return operation.LeftOperand * operation.RightOperand;
+                    result = operation.LeftOperand * operation.RightOperand;
+                    break;
                 case Operators.Divide:
-                    return operation.LeftOperand / operation.RightOperand;
+                    if (operation.RightOperand.Equals(0d))
+                        return new CalculateResponse { Error = "Divide by 0 error" };
+
+                    result = operation.LeftOperand / operation.RightOperand;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            return new CalculateResponse { Result = result };
         }
     }
 }
