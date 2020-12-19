@@ -11,7 +11,7 @@ namespace CalculatorClient
 {
     public class MainViewModel : PropertyChangedBase
     {
-        private static readonly ICalculatorService CalculatorService = new LocalCalculatorService();
+        private static readonly ICalculatorService CalculatorService = new GrpcCalculatorService();
         private static readonly Dictionary<string, Operators> StringToOperatorsMap = new Dictionary<string, Operators>
         {
             ["+"] = Operators.Add,

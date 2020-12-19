@@ -8,4 +8,5 @@
 **/Debug
 **/Release
 **/x64
+**/obj
 /packages

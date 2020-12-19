@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package calculator;
+option csharp_namespace = "CalculatorLib";
 
 message OperationRequest {
 	double a = 1;
@@ -29,6 +30,6 @@ message LoadResponse {
 }
 
 service  Calculator {
-  rpc Calculate(OperationRequest) returns (OperationResponse) {}
+  rpc CalculateAsync(OperationRequest) returns (OperationResponse) {}
   rpc ReadCalculatorLoad(LoadIntervalRequest) returns (stream LoadResponse) {} //number of actions in a minutes
 }
