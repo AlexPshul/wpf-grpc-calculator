@@ -35,7 +35,7 @@ namespace CalculatorLib
 
         private IObservable<double> ConnectToOperationsPerMinuteStream()
         {
-            IAsyncStreamReader<LoadResponse> asyncStreamReader = _client.ReadCalculatorLoad(new LoadIntervalRequest()).ResponseStream;
+            IAsyncStreamReader<LoadResponse> asyncStreamReader = _client.ReadCalculatorLoad(new LoadIntervalRequest { IntervalInSeconds = 1 }).ResponseStream;
 
             return Observable.Create<double>(async observer =>
             {
