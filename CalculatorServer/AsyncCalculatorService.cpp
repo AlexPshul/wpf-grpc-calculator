@@ -62,24 +62,24 @@ void AsyncCalculatorService::CalculateRequestHandler::OnProcess()
 }
 
 
-void AsyncCalculatorService::HandleRequest(std::function<std::shared_ptr<IRequestHandlerBase> ()> CreateHandler)
+void AsyncCalculatorService::HandleRequest(const std::shared_ptr<IRequestHandlerBase> &handler)
 {
-	std::map<void *, std::shared_ptr<IRequestHandlerBase>> handlers;
-
-	auto startNewRequest = [&]()
 	{
-		auto handler = CreateHandler();
-		handlers.insert(std::make_pair(handler.get(), handler));
-		handler->ExecuteNext(); //create
-	};
+		std::lock_guard<std::mutex> guard { _handlersMutex };
+		_handlers.insert(std::make_pair(handler.get(), handler));
+	}
+	handler->ExecuteNext(); //create
 
-	startNewRequest();
 	
 	while (true)
 	{
 		IRequestHandlerBase *pNextHandler;
 		bool bOk;
-		_completionQueue->Next(reinterpret_cast<void**>(&pNextHandler), &bOk);
+
+		{
+			std::lock_guard<std::mutex> guard{ _completionQueueMutex };
+			_completionQueue->Next(reinterpret_cast<void**>(&pNextHandler), &bOk);
+		}
 
 		if (!bOk || pNextHandler == nullptr)
 			continue;
@@ -87,12 +87,17 @@ void AsyncCalculatorService::HandleRequest(std::function<std::shared_ptr<IReques
 		auto[shouldFinish, shouldCreateNewInstance] = pNextHandler->ExecuteNext();
 		if (shouldFinish)
 		{
-			handlers.erase(pNextHandler); //remove from the map, it also clear the memory of the shared_ptr
+			std::lock_guard<std::mutex> guard{ _handlersMutex };
+			_handlers.erase(pNextHandler); //remove from the map, it also clear the memory of the shared_ptr
 			continue;
 		}
+		
 		if (shouldCreateNewInstance)
 		{
-			startNewRequest();
+			auto newHandler = pNextHandler->CreateNew();
+			newHandler->ExecuteNext();
+			std::lock_guard<std::mutex> guard{ _handlersMutex };
+			_handlers.insert(std::make_pair(newHandler.get(), newHandler));
 		}
 	}
 }
@@ -145,12 +150,8 @@ void AsyncCalculatorService::CalculatorLoadHandler::OnProcess()
 	auto server = builder.BuildAndStart();
     std::cout << "Server listening on " << serverAddress << std::endl;
 
-
-	auto calculateHandlerCreator = [&]() { return std::make_shared<CalculateRequestHandler>(&service); };
-	std::thread calculateRequestHandler([&](){	service.HandleRequest(calculateHandlerCreator);	}); //create one reader, we can create more for concurrent request handling
-
-	auto calculatorLoadHandlerCreator = [&]() { return std::make_shared<CalculatorLoadHandler>(&service); }; //create one stream handler - this demo annot handle more than one
-	std::thread calculatorLoadRequestHandler([&]() {service.HandleRequest(calculatorLoadHandlerCreator);});
+	std::thread calculateRequestHandler([&](){	service.HandleRequest(std::make_shared<CalculateRequestHandler>(&service));	}); //create one reader, we can create more for concurrent request handling
+	std::thread calculatorLoadRequestHandler([&]() {service.HandleRequest(std::make_shared<CalculatorLoadHandler>(&service));});
 	calculateRequestHandler.join();
 	calculatorLoadRequestHandler.join();
 }

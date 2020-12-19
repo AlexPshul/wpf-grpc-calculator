@@ -24,6 +24,7 @@ private:
 		
 		virtual ~IRequestHandlerBase() = default;
 		IRequestHandlerBase() = default;
+		[[nodiscard]] virtual std::shared_ptr<IRequestHandlerBase> CreateNew() const abstract;
 		virtual std::tuple<bool, bool> ExecuteNext() abstract;
 	};
 
@@ -92,6 +93,8 @@ private:
 		void OnCreate() override;
 		void OnProcess() override;
 		void OnFinish() override {}
+		std::shared_ptr<IRequestHandlerBase> CreateNew() const override { return std::make_shared<CalculateRequestHandler>(GetService()); }
+		
 	};
 
 	class CalculatorLoadHandler : public RequestHandlerBase<calculator::LoadIntervalRequest, grpc::ServerAsyncWriter<calculator::LoadResponse>>
@@ -109,15 +112,18 @@ private:
 		void OnCreate() override;
 		void OnProcess() override;
 		void OnFinish() override {}
+		std::shared_ptr<IRequestHandlerBase> CreateNew() const override { return std::make_shared<CalculatorLoadHandler>(GetService()); }
 	};
 	
-    
+	std::map<void *, std::shared_ptr<IRequestHandlerBase>> _handlers{};
+	std::mutex _handlersMutex{};
 	std::unique_ptr<grpc::ServerCompletionQueue> _completionQueue;
+	std::mutex _completionQueueMutex{};
 	void SetCompletionQueue(std::unique_ptr<grpc::ServerCompletionQueue> unique) { _completionQueue = std::move(unique); }
 	const std::unique_ptr<grpc::ServerCompletionQueue> &GetCompletionQueue() const { return _completionQueue; }
 
 public:
-	void HandleRequest(std::function<std::shared_ptr<IRequestHandlerBase>()> CreateHandler);
+	void HandleRequest(const std::shared_ptr<IRequestHandlerBase> &handler);
     static void RunServer();
 };
 

@@ -57,7 +57,7 @@ void RegisterForCallback(CalcLoadCallback_t callback, int intervalInSeconds)
 void CALLBACK OnLoadReport(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
     const double timeTaken = (clock() - startTime) / (double)CLOCKS_PER_SEC;
-    loadCallBack(numberOfOperations / timeTaken);
+    loadCallBack(numberOfOperations * 60 / timeTaken);
 }
 
 void CreateLoadTimer(int intervalInSeconds)
