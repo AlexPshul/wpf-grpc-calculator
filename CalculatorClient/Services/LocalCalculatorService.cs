@@ -15,7 +15,7 @@ namespace CalculatorClient.Services
         
         public async Task<double> Calculate(MathOperation operation)
         {
-            await Task.Delay(5000);
+            await Task.Yield();
             switch (operation.Operator)
             {
                 case Operators.Add:
