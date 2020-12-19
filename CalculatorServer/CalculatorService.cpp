@@ -14,7 +14,7 @@
 using namespace calculator;
 using namespace grpc;
 
-static std::map<OperationRequest_Operators, CalcOperations> operation_map 
+static std::map<OperationRequest_Operators, CalcOperations> operationMap 
 {
     {OperationRequest_Operators_ADD, OP_ADD},
     {OperationRequest_Operators_SUBTRACT, OP_SUB},
@@ -43,8 +43,8 @@ Status CalculatorService::Calculate(ServerContext* context,
 {
     response->set_result(0.0); //default, in case of an error
 
-    const auto op = operation_map.find(request->operator_());
-    if (op == std::end(operation_map))
+    const auto op = operationMap.find(request->operator_());
+    if (op == std::end(operationMap))
     {
         return Status(INVALID_ARGUMENT, "Unknown operation");
     }

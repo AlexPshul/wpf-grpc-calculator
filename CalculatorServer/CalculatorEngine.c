@@ -74,7 +74,7 @@ void CreateLoadTimer(int intervalInSeconds)
     }
 
     if (!CreateTimerQueueTimer(&hTimer, hTimerQueue,
-        (WAITORTIMERCALLBACK)OnLoadReport, 0, 1000, intervalInSeconds * 1000, WT_EXECUTEDEFAULT))
+        (WAITORTIMERCALLBACK)OnLoadReport, 0, 1000, intervalInSeconds * 1000, WT_EXECUTEINTIMERTHREAD))
     {
         //demo, skip error handling
     }

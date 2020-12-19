@@ -14,6 +14,9 @@ private:
 		FINISH
 	};
 
+	//[shouldFinish, shouldCreateNewInstance, nextState]
+	typedef std::tuple<bool, bool, messageProcessingState> state_result_t;
+	
 	class IRequestHandlerBase
 	{
 	public:
@@ -57,29 +60,33 @@ private:
 		//return [shouldFinish, shouldCreateNewInstance]
 		std::tuple<bool, bool> ExecuteNext() override
 		{
+			state_result_t result;
+			
 			switch (_state)
 			{
+				
 			case messageProcessingState::CREATE:
-				OnCreate();
-				_state = messageProcessingState::PROCESS;
-				return std::make_tuple(false, false);
+				
+				result = OnCreate();
+				break;
 
 			case messageProcessingState::PROCESS:
-				OnProcess();
-				_state = messageProcessingState::FINISH;
-				return std::make_tuple(false, true);
-
+				result = OnProcess();
+				break;
+				
 			case messageProcessingState::FINISH:
-				OnFinish();
-				return std::make_tuple(true, false);
+				result = OnFinish();
+				break;
 			}
-			return std::make_tuple(false, false);
+
+			auto[shouldFinish, shouldCreateNewInstance, newState] = result;
+			_state = newState;
+			return std::make_tuple(shouldFinish, shouldCreateNewInstance);
 		}
 
-		
-		virtual void OnCreate() abstract;
-		virtual void OnProcess() abstract;
-		virtual void OnFinish() abstract;
+		virtual state_result_t OnCreate() abstract;
+		virtual state_result_t OnProcess() abstract;
+		virtual state_result_t OnFinish() { return std::make_tuple(false, false, messageProcessingState::FINISH); };
 		~RequestHandlerBase() override = default;
 
 	};
@@ -90,9 +97,9 @@ private:
 		using RequestHandlerBase<calculator::OperationRequest, grpc::ServerAsyncResponseWriter<calculator::OperationResponse>>::RequestHandlerBase;
 	
 	private:
-		void OnCreate() override;
-		void OnProcess() override;
-		void OnFinish() override {}
+		state_result_t OnCreate() override;
+		state_result_t OnProcess() override;
+		
 		std::shared_ptr<IRequestHandlerBase> CreateNew() const override { return std::make_shared<CalculateRequestHandler>(GetService()); }
 		
 	};
@@ -108,10 +115,11 @@ private:
 		double _rate{};
 		void ReportLoad(double rate);
 		static void CalcLoadCallback(double rate);
+		std::once_flag initFlag;
 		
-		void OnCreate() override;
-		void OnProcess() override;
-		void OnFinish() override {}
+		state_result_t OnCreate() override;
+		state_result_t OnProcess() override;
+		
 		std::shared_ptr<IRequestHandlerBase> CreateNew() const override { return std::make_shared<CalculatorLoadHandler>(GetService()); }
 	};
 	

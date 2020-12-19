@@ -12,7 +12,7 @@
 using namespace calculator;
 using namespace grpc;
 
-static std::map<OperationRequest_Operators, CalcOperations> operation_map 
+static std::map<OperationRequest_Operators, CalcOperations> operationMap 
 {
     {OperationRequest_Operators_ADD, OP_ADD},
     {OperationRequest_Operators_SUBTRACT, OP_SUB},
@@ -21,18 +21,24 @@ static std::map<OperationRequest_Operators, CalcOperations> operation_map
 };
 
 
-void AsyncCalculatorService::CalculateRequestHandler::OnCreate()
+AsyncCalculatorService::state_result_t AsyncCalculatorService::CalculateRequestHandler::OnCreate()
 {
 	GetService()->RequestCalculate(GetContext(), GetRequest(), GetResponder(), GetService()->GetCompletionQueue().get(), GetService()->GetCompletionQueue().get(),this);
+
+	//[shouldFinish, shouldCreateNewInstance, nextState]
+	return std::make_tuple(false, false, messageProcessingState::PROCESS);
 }
 
-void AsyncCalculatorService::CalculateRequestHandler::OnProcess()
+AsyncCalculatorService::state_result_t AsyncCalculatorService::CalculateRequestHandler::OnProcess()
 {
-	const auto op = operation_map.find(GetRequest()->operator_());
-	if (op == std::end(operation_map))
+	//[shouldFinish, shouldCreateNewInstance, nextState]
+	auto resultAction = std::make_tuple(false, true, messageProcessingState::FINISH);
+	
+	const auto op = operationMap.find(GetRequest()->operator_());
+	if (op == std::end(operationMap))
 	{
 		GetResponder()->FinishWithError(Status(INVALID_ARGUMENT, "Unknown operation"), this);
-		return;
+		return resultAction;
 	}
 
 	const OperationInfo operationInfo =
@@ -47,18 +53,20 @@ void AsyncCalculatorService::CalculateRequestHandler::OnProcess()
 	if (result.resultStatus == OP_ERROR_DIVIDE_BY_ZERO)
 	{
 		GetResponder()->FinishWithError(Status(INVALID_ARGUMENT, "Divide by zero"), this);
-		return;
+		return resultAction;
 	}
 
 	if (result.resultStatus == OP_ERROR_UNKNOWN_OPERATION) //probably will never happen
 	{
 		GetResponder()->FinishWithError(Status(INVALID_ARGUMENT, "Unknown operation"), this);
-		return;
+		return resultAction;
 	}
 
 	OperationResponse operationResponse;
 	operationResponse.set_result(result.calculationResult);
 	GetResponder()->Finish(operationResponse, Status::OK, this);
+
+	return resultAction;
 }
 
 
@@ -118,23 +126,31 @@ void AsyncCalculatorService::CalculatorLoadHandler::CalcLoadCallback(double rate
 }
 
 
-void AsyncCalculatorService::CalculatorLoadHandler::OnCreate()
+AsyncCalculatorService::state_result_t  AsyncCalculatorService::CalculatorLoadHandler::OnCreate()
 {
 	GetService()->RequestReadCalculatorLoad(GetContext(), GetRequest(), GetResponder(), GetService()->GetCompletionQueue().get(), GetService()->GetCompletionQueue().get(), this);
+
+	//[shouldFinish, shouldCreateNewInstance, nextState]
+	return std::make_tuple(false, false, messageProcessingState::PROCESS);
 }
 
 //in this implementation we do not receive multiple callback clients
-void AsyncCalculatorService::CalculatorLoadHandler::OnProcess()
+AsyncCalculatorService::state_result_t AsyncCalculatorService::CalculatorLoadHandler::OnProcess()
 {
-	RegisterForCallback(CalcLoadCallback, GetRequest()->intervalinseconds());
-	while (true)
+	std::call_once(initFlag, [&]()
 	{
-		std::unique_lock<std::mutex> lck(_notificationMutex);
-		_notification.wait(lck);
-		LoadResponse response;
-		response.set_invocationsperminutes(_rate);
-		GetResponder()->Write(response, this);
-	}
+		_this = this;
+		RegisterForCallback(CalcLoadCallback, GetRequest()->intervalinseconds());
+	});
+	
+	std::unique_lock<std::mutex> lck(_notificationMutex);
+	_notification.wait(lck);
+	LoadResponse response;
+	response.set_invocationsperminutes(_rate);
+	GetResponder()->Write(response, this);
+
+	//[shouldFinish, shouldCreateNewInstance, nextState]
+	return std::make_tuple(false, false, messageProcessingState::PROCESS);
 }
 
 
