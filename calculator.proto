@@ -30,6 +30,6 @@ message LoadResponse {
 }
 
 service  Calculator {
-  rpc CalculateAsync(OperationRequest) returns (OperationResponse) {}
+  rpc Calculate(OperationRequest) returns (OperationResponse) {}
   rpc ReadCalculatorLoad(LoadIntervalRequest) returns (stream LoadResponse) {} //number of actions in a minutes
 }

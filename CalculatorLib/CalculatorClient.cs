@@ -29,7 +29,7 @@ namespace CalculatorLib
         public IObservable<double> OperationsPerMinute { get; }
         public async Task<double> CalculateAsync(OperationRequest operation)
         {
-            var response = await _client.CalculateAsyncAsync(operation);
+            var response = await _client.CalculateAsync(operation);
             return response.Result;
         }
 

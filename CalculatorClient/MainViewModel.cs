@@ -53,7 +53,7 @@ namespace CalculatorClient
         {
             OperandManipulationCommand = new Command(param => AppendToCurrentInput(param as string));
             OperatorCommand = new Command(param => OperatorCall(param as string));
-            ClearStateCommand = new Command(ClearState);
+            ClearStateCommand = new Command(() => ClearState());
 
             CalculatorService.OperationsPerMinute.Subscribe(averageOperations => AverageOperations = averageOperations);
         }
