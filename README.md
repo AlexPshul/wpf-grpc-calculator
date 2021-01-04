@@ -1,4 +1,4 @@
-# iai-grpc
+# WPF gRPC Calculator
 
 C++ protoc tool takes the proto file and create the needed C++ source and header files
 For the sake of the demo, we run them only once aftre each change.
